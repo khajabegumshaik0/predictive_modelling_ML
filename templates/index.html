@@ -1,0 +1,890 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Predictive Modeling Dashboard</title>
+    <!-- Google Fonts: Outfit -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg-color: #0b0f19;
+            --card-bg: rgba(17, 24, 39, 0.6);
+            --card-border: rgba(255, 255, 255, 0.08);
+            --primary: #3b82f6;
+            --primary-glow: rgba(59, 130, 246, 0.3);
+            --secondary: #8b5cf6;
+            --text-main: #f3f4f6;
+            --text-muted: #9ca3af;
+            --success: #10b981;
+            --success-glow: rgba(16, 185, 129, 0.2);
+            --danger: #ef4444;
+            --danger-glow: rgba(239, 68, 68, 0.2);
+            --font-family: 'Outfit', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(59, 130, 246, 0.1) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(139, 92, 246, 0.1) 0px, transparent 50%);
+            background-attachment: fixed;
+            color: var(--text-main);
+            font-family: var(--font-family);
+            min-height: 100vh;
+            padding: 2rem 1.5rem;
+            line-height: 1.5;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        /* Header Style */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2.5rem;
+            border-bottom: 1px solid var(--card-border);
+            padding-bottom: 1.5rem;
+        }
+
+        .logo-area h1 {
+            font-size: 2rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #60a5fa, #a78bfa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -0.5px;
+        }
+
+        .logo-area p {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            margin-top: 0.25rem;
+        }
+
+        .status-badge {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            padding: 0.5rem 1rem;
+            border-radius: 9999px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: var(--success);
+        }
+
+        .status-pulse {
+            width: 8px;
+            height: 8px;
+            background-color: var(--success);
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(0.95);
+                box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+            }
+            70% {
+                transform: scale(1);
+                box-shadow: 0 0 0 8px rgba(16, 185, 129, 0);
+            }
+            100% {
+                transform: scale(0.95);
+                box-shadow: 0 0 0 0 rgba(16, 185, 129, 0);
+            }
+        }
+
+        /* Grid Layout */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 1.1fr 1.4fr;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        @media (max-width: 1024px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Glassmorphism Cards */
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-radius: 1.25rem;
+            padding: 1.75rem;
+            box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.3);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .card:hover {
+            box-shadow: 0 15px 35px -5px rgba(0, 0, 0, 0.4);
+        }
+
+        .card-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 1.25rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .card-title span {
+            background: linear-gradient(135deg, #93c5fd, #c084fc);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* Models Section */
+        .best-model-banner {
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.15), rgba(139, 92, 246, 0.15));
+            border: 1px solid rgba(139, 92, 246, 0.3);
+            border-radius: 0.75rem;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .best-model-info h4 {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-muted);
+        }
+
+        .best-model-info p {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--text-main);
+        }
+
+        .best-model-badge {
+            background: var(--primary);
+            color: #fff;
+            padding: 0.25rem 0.75rem;
+            border-radius: 0.375rem;
+            font-size: 0.8rem;
+            font-weight: 600;
+            box-shadow: 0 0 15px var(--primary-glow);
+        }
+
+        .model-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .model-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.03);
+            padding: 0.75rem 1rem;
+            border-radius: 0.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            cursor: pointer;
+            transition: background 0.2s, border-color 0.2s;
+        }
+
+        .model-item:hover, .model-item.active {
+            background: rgba(59, 130, 246, 0.08);
+            border-color: rgba(59, 130, 246, 0.3);
+        }
+
+        .model-item-name {
+            font-weight: 500;
+        }
+
+        .model-item-acc {
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        /* Predict Form Section */
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.25rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .form-group label {
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: var(--text-muted);
+        }
+
+        .form-group input {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--card-border);
+            border-radius: 0.5rem;
+            padding: 0.75rem 1rem;
+            color: #fff;
+            font-family: inherit;
+            font-size: 1rem;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 10px var(--primary-glow);
+        }
+
+        .btn-predict {
+            width: 100%;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border: none;
+            border-radius: 0.5rem;
+            padding: 1rem;
+            color: white;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3);
+            transition: transform 0.2s, box-shadow 0.2s;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-predict:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(139, 92, 246, 0.5);
+        }
+
+        .btn-predict:active {
+            transform: translateY(0);
+        }
+
+        /* Result Panel */
+        .result-container {
+            margin-top: 1.5rem;
+            border-radius: 0.75rem;
+            padding: 1.25rem;
+            display: none;
+            animation: fadeIn 0.4s ease forwards;
+        }
+
+        .result-container.approved {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: rgba(16, 185, 129, 0.08);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            box-shadow: 0 0 15px var(--success-glow);
+        }
+
+        .result-container.rejected {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: rgba(239, 68, 68, 0.08);
+            border: 1px solid rgba(239, 68, 68, 0.2);
+            box-shadow: 0 0 15px var(--danger-glow);
+        }
+
+        .result-info h5 {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--text-muted);
+        }
+
+        .result-info p {
+            font-size: 1.5rem;
+            font-weight: 800;
+            margin-top: 0.25rem;
+        }
+
+        .result-container.approved .result-info p {
+            color: var(--success);
+        }
+
+        .result-container.rejected .result-info p {
+            color: var(--danger);
+        }
+
+        /* Progress Circle */
+        .progress-circle {
+            position: relative;
+            width: 70px;
+            height: 70px;
+        }
+
+        .progress-circle svg {
+            width: 70px;
+            height: 70px;
+            transform: rotate(-90deg);
+        }
+
+        .progress-circle circle {
+            fill: none;
+            stroke-width: 6;
+        }
+
+        .progress-bg {
+            stroke: rgba(255, 255, 255, 0.05);
+        }
+
+        .progress-bar {
+            stroke-dasharray: 201;
+            stroke-dashoffset: 201;
+            transition: stroke-dashoffset 1s ease-in-out;
+            stroke-linecap: round;
+        }
+
+        .result-container.approved .progress-bar {
+            stroke: var(--success);
+        }
+
+        .result-container.rejected .progress-bar {
+            stroke: var(--danger);
+        }
+
+        .progress-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 0.85rem;
+            font-weight: 700;
+        }
+
+        /* Tabs & Plot Section */
+        .plot-tabs {
+            display: flex;
+            gap: 0.5rem;
+            border-bottom: 1px solid var(--card-border);
+            padding-bottom: 0.75rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .tab-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            padding: 0.5rem 1rem;
+            font-family: inherit;
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            border-radius: 0.375rem;
+            transition: background 0.2s, color 0.2s;
+        }
+
+        .tab-btn:hover {
+            color: var(--text-main);
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        .tab-btn.active {
+            color: #fff;
+            background: var(--primary);
+            box-shadow: 0 0 10px var(--primary-glow);
+        }
+
+        .plot-display-area {
+            position: relative;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 0.75rem;
+            border: 1px solid rgba(255, 255, 255, 0.03);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 380px;
+            overflow: hidden;
+        }
+
+        .plot-img {
+            max-width: 100%;
+            max-height: 380px;
+            border-radius: 0.5rem;
+            display: none;
+            animation: fadeIn 0.5s ease forwards;
+        }
+
+        /* Loading Spinner */
+        .spinner {
+            border: 4px solid rgba(255, 255, 255, 0.1);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border-left-color: var(--primary);
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Table Section */
+        .table-card {
+            margin-top: 2rem;
+            overflow: hidden;
+        }
+
+        .table-responsive {
+            overflow-x: auto;
+            max-height: 300px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+        }
+
+        th, td {
+            padding: 0.85rem 1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            font-size: 0.9rem;
+        }
+
+        th {
+            font-weight: 600;
+            color: var(--text-muted);
+            background: rgba(255, 255, 255, 0.01);
+            position: sticky;
+            top: 0;
+            backdrop-filter: blur(12px);
+            z-index: 10;
+        }
+
+        tr:hover {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 0.2rem 0.5rem;
+            border-radius: 0.25rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .badge-success {
+            background: rgba(16, 185, 129, 0.15);
+            color: var(--success);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+        }
+
+        .badge-danger {
+            background: rgba(239, 68, 68, 0.15);
+            color: var(--danger);
+            border: 1px solid rgba(239, 68, 68, 0.2);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Detailed Reports Tabs */
+        .reports-container {
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--card-border);
+        }
+
+        .report-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            margin-top: 0.75rem;
+        }
+
+        .report-stat-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            border-radius: 0.5rem;
+            padding: 0.75rem;
+            text-align: center;
+        }
+
+        .report-stat-val {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .report-stat-label {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <!-- Header -->
+    <header>
+        <div class="logo-area">
+            <h1>Predictive Modeling & ML Studio</h1>
+            <p>Loan Approval Classification & Model Performance Evaluation</p>
+        </div>
+        <div class="status-badge">
+            <span class="status-pulse"></span>
+            <span>Localhost Active: Port 5000</span>
+        </div>
+    </header>
+
+    <!-- Main Grid -->
+    <div class="dashboard-grid">
+        
+        <!-- Left Side: Models and Form -->
+        <div style="display: flex; flex-direction: column; gap: 2rem;">
+            
+            <!-- Best Model & Overview Card -->
+            <div class="card">
+                <div class="card-title">
+                    <span>Model Performance</span>
+                </div>
+                
+                <div class="best-model-banner">
+                    <div class="best-model-info">
+                        <h4>Best Performing Model</h4>
+                        <p id="best-model-name">Loading...</p>
+                    </div>
+                    <span class="best-model-badge">Active</span>
+                </div>
+
+                <div class="model-list" id="model-list">
+                    <!-- Dynamic model items loaded here -->
+                </div>
+
+                <!-- Classification Report Stats for selected model -->
+                <div class="reports-container">
+                    <h4 style="font-size: 0.9rem; color: var(--text-muted); font-weight: 600;">Model Metrics Summary</h4>
+                    <div class="report-grid">
+                        <div class="report-stat-card">
+                            <div class="report-stat-val" id="stat-precision">-</div>
+                            <div class="report-stat-label">Precision</div>
+                        </div>
+                        <div class="report-stat-card">
+                            <div class="report-stat-val" id="stat-recall">-</div>
+                            <div class="report-stat-label">Recall</div>
+                        </div>
+                        <div class="report-stat-card">
+                            <div class="report-stat-val" id="stat-f1">-</div>
+                            <div class="report-stat-label">F1-Score</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Loan Prediction Form -->
+            <div class="card">
+                <div class="card-title">
+                    <span>Real-time Prediction</span>
+                </div>
+                
+                <form id="prediction-form" onsubmit="handlePredict(event)">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="age">Age (Years)</label>
+                            <input type="number" id="age" value="32" required min="18" max="100">
+                        </div>
+                        <div class="form-group">
+                            <label for="income">Annual Income ($)</label>
+                            <input type="number" id="income" value="55000" required min="5000">
+                        </div>
+                        <div class="form-group">
+                            <label for="credit_score">Credit Score</label>
+                            <input type="number" id="credit_score" value="710" required min="300" max="850">
+                        </div>
+                        <div class="form-group">
+                            <label for="loan_amount">Loan Amount Requested ($)</label>
+                            <input type="number" id="loan_amount" value="12000" required min="500">
+                        </div>
+                    </div>
+                    <button type="submit" class="btn-predict" id="predict-btn">
+                        <span>Analyze Application</span>
+                    </button>
+                </form>
+
+                <!-- Prediction Result Box -->
+                <div class="result-container" id="result-box">
+                    <div class="result-info">
+                        <h5 id="result-model-badge">Best Model Output</h5>
+                        <p id="result-text">Approved</p>
+                    </div>
+                    <!-- Circular approval percentage indicator -->
+                    <div class="progress-circle">
+                        <svg>
+                            <circle class="progress-bg" cx="35" cy="35" r="32"></circle>
+                            <circle class="progress-bar" id="progress-bar-circle" cx="35" cy="35" r="32"></circle>
+                        </svg>
+                        <div class="progress-text" id="progress-percentage">-%</div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Right Side: Plots Viewer -->
+        <div class="card" style="display: flex; flex-direction: column;">
+            <div class="card-title">
+                <span>Visual Analysis Reports</span>
+            </div>
+            
+            <div class="plot-tabs">
+                <button class="tab-btn active" onclick="switchPlot('confusion_matrix', this)">Confusion Matrix</button>
+                <button class="tab-btn" onclick="switchPlot('roc_curve', this)">ROC Curve</button>
+                <button class="tab-btn" onclick="switchPlot('accuracy_comparison', this)">Model Accuracies</button>
+            </div>
+
+            <div class="plot-display-area" id="plot-area">
+                <div class="spinner" id="plot-spinner"></div>
+                <img id="plot-img" class="plot-img" alt="Evaluation Plot">
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Bottom: Dataset Table -->
+    <div class="card table-card">
+        <div class="card-title">
+            <span>Training Dataset Inspect</span>
+        </div>
+        <div class="table-responsive">
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Age</th>
+                        <th>Annual Income ($)</th>
+                        <th>Credit Score</th>
+                        <th>Loan Amount ($)</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody id="dataset-body">
+                    <!-- Rows will be injected here -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Global state
+    let metricsData = null;
+    let plotsData = null;
+    let activeModel = null;
+
+    // Fetch initial metrics, models and table data
+    async function loadMetrics() {
+        try {
+            const res = await fetch('/api/metrics');
+            const data = await res.json();
+            metricsData = data;
+            
+            // Set Best Model
+            document.getElementById('best-model-name').innerText = data.best_model;
+            
+            // Render Model List
+            const listContainer = document.getElementById('model-list');
+            listContainer.innerHTML = '';
+            
+            Object.keys(data.accuracies).forEach(name => {
+                const isActive = name === data.best_model;
+                if(isActive) activeModel = name;
+                
+                const element = document.createElement('div');
+                element.className = `model-item ${isActive ? 'active' : ''}`;
+                element.onclick = () => selectModel(name, element);
+                element.innerHTML = `
+                    <span class="model-item-name">${name} ${isActive ? '👑' : ''}</span>
+                    <span class="model-item-acc">${(data.accuracies[name] * 100).toFixed(1)}% Acc</span>
+                `;
+                listContainer.appendChild(element);
+            });
+
+            // Set initially active model stats
+            renderModelReport(activeModel);
+
+            // Render Table Rows
+            const tbody = document.getElementById('dataset-body');
+            tbody.innerHTML = '';
+            data.dataset.forEach((row, i) => {
+                const statusBadge = row.Approved === 1 
+                    ? '<span class="badge badge-success">Approved</span>' 
+                    : '<span class="badge badge-danger">Rejected</span>';
+                
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td style="color: var(--text-muted)">#${i+1}</td>
+                    <td>${row.Age}</td>
+                    <td>$${row.Income.toLocaleString()}</td>
+                    <td>${row.CreditScore}</td>
+                    <td>$${row.LoanAmount.toLocaleString()}</td>
+                    <td>${statusBadge}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+
+        } catch (e) {
+            console.error('Error fetching metrics:', e);
+        }
+    }
+
+    // Select/Change active model in overview list
+    function selectModel(name, element) {
+        document.querySelectorAll('.model-item').forEach(el => el.classList.remove('active'));
+        element.classList.add('active');
+        activeModel = name;
+        renderModelReport(name);
+    }
+
+    // Show model metrics
+    function renderModelReport(modelName) {
+        if (!metricsData) return;
+        const report = metricsData.classification_reports[modelName];
+        
+        // Use average metrics (macro avg or weighted avg)
+        const metrics = report['macro avg'];
+        
+        document.getElementById('stat-precision').innerText = (metrics.precision * 100).toFixed(0) + '%';
+        document.getElementById('stat-recall').innerText = (metrics.recall * 100).toFixed(0) + '%';
+        document.getElementById('stat-f1').innerText = (metrics['f1-score'] * 100).toFixed(0) + '%';
+    }
+
+    // Fetch and load evaluation plots (confusion matrix, ROC, comparisons)
+    async function loadPlots() {
+        const spinner = document.getElementById('plot-spinner');
+        const img = document.getElementById('plot-img');
+        
+        spinner.style.display = 'block';
+        img.style.display = 'none';
+
+        try {
+            const res = await fetch('/api/plots');
+            const data = await res.json();
+            plotsData = data;
+            
+            // Render first plot (Confusion Matrix)
+            switchPlot('confusion_matrix', document.querySelector('.tab-btn.active'));
+        } catch (e) {
+            console.error('Error loading plots:', e);
+        }
+    }
+
+    // Switch between plots
+    function switchPlot(plotKey, buttonElement) {
+        if (!plotsData) return;
+        
+        document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+        buttonElement.classList.add('active');
+        
+        const img = document.getElementById('plot-img');
+        const spinner = document.getElementById('plot-spinner');
+        
+        spinner.style.display = 'none';
+        img.src = plotsData[plotKey];
+        img.style.display = 'block';
+    }
+
+    // Submit Prediction Form
+    async function handlePredict(event) {
+        event.preventDefault();
+        
+        const predictBtn = document.getElementById('predict-btn');
+        const resultBox = document.getElementById('result-box');
+        const prevText = predictBtn.innerText;
+        
+        predictBtn.disabled = true;
+        predictBtn.innerText = 'Analyzing Data...';
+        
+        const payload = {
+            age: parseFloat(document.getElementById('age').value),
+            income: parseFloat(document.getElementById('income').value),
+            credit_score: parseFloat(document.getElementById('credit_score').value),
+            loan_amount: parseFloat(document.getElementById('loan_amount').value)
+        };
+
+        try {
+            const res = await fetch('/api/predict', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+            const data = await res.json();
+            
+            predictBtn.disabled = false;
+            predictBtn.innerText = prevText;
+            
+            if (data.status === 'success') {
+                // Show result box
+                resultBox.className = 'result-container'; // clear classes
+                resultBox.classList.add(data.approved ? 'approved' : 'rejected');
+                
+                document.getElementById('result-model-badge').innerText = `Prediction: ${data.best_model_used}`;
+                document.getElementById('result-text').innerText = data.prediction;
+                
+                // Show progress circle (Probability)
+                const percentage = data.probability !== null 
+                    ? Math.round(data.probability * 100) 
+                    : (data.approved ? 100 : 0);
+                
+                document.getElementById('progress-percentage').innerText = percentage + '%';
+                
+                // Set svg circular stroke offset: r=32 -> circumference=2*pi*32 ~= 201
+                const circle = document.getElementById('progress-bar-circle');
+                const circumference = 201;
+                const offset = circumference - (percentage / 100) * circumference;
+                circle.style.strokeDashoffset = offset;
+                
+                resultBox.style.display = 'flex';
+            } else {
+                alert('Error making prediction: ' + data.message);
+            }
+        } catch (e) {
+            predictBtn.disabled = false;
+            predictBtn.innerText = prevText;
+            console.error('Error running prediction:', e);
+            alert('Server error occurred during prediction.');
+        }
+    }
+
+    // Initialize Page
+    window.addEventListener('DOMContentLoaded', () => {
+        loadMetrics();
+        loadPlots();
+    });
+</script>
+
+</body>
+</html>
