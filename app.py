@@ -301,7 +301,7 @@ def get_eda_plots():
     # Plot 2: Credit Score Distribution by Approval Status
     fig, ax = plt.subplots(figsize=(6.5, 5))
     sns.histplot(data=df, x="CreditScore", hue="Approved", multiple="stack", 
-                 kde=True, palette={0: "#ef4444", 1: "#10b981"}, bins=15, ax=ax)
+                 kde=True, palette={0: "#ef4444", 1: "#10b981", "0": "#ef4444", "1": "#10b981"}, bins=15, ax=ax)
     ax.set_title("Credit Score Distribution by Approval", fontsize=13, pad=15)
     ax.set_xlabel("Credit Score", fontsize=11)
     ax.set_ylabel("Count", fontsize=11)
@@ -310,7 +310,7 @@ def get_eda_plots():
     # Plot 3: Income vs Credit Score Scatter colored by Approval Status
     fig, ax = plt.subplots(figsize=(6.5, 5))
     sns.scatterplot(data=df, x="CreditScore", y="Income", hue="Approved",
-                    palette={0: "#ef4444", 1: "#10b981"}, alpha=0.8, s=60, ax=ax)
+                    palette={0: "#ef4444", 1: "#10b981", "0": "#ef4444", "1": "#10b981"}, alpha=0.8, s=60, ax=ax)
     ax.set_title("Income vs Credit Score Analysis", fontsize=13, pad=15)
     ax.set_xlabel("Credit Score", fontsize=11)
     ax.set_ylabel("Annual Income ($)", fontsize=11)
@@ -319,9 +319,10 @@ def get_eda_plots():
     
     # Plot 4: DTI Ratio distribution by Approval
     fig, ax = plt.subplots(figsize=(6.5, 5))
-    sns.boxplot(data=df, x="Approved", y="DebtToIncome", 
-                palette={0: "#ef4444", 1: "#10b981"}, ax=ax)
+    sns.boxplot(data=df, x="Approved", y="DebtToIncome", hue="Approved",
+                palette={0: "#ef4444", 1: "#10b981", "0": "#ef4444", "1": "#10b981"}, legend=False, ax=ax)
     ax.set_title("Debt-to-Income (DTI) Boxplot", fontsize=13, pad=15)
+    ax.set_xticks([0, 1])
     ax.set_xticklabels(["Rejected (0)", "Approved (1)"])
     ax.set_ylabel("Debt-to-Income Ratio", fontsize=11)
     plots['dti_boxplot'] = fig_to_base64(fig)
