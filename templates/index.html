@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Predictive Modeling Dashboard</title>
+    <title>Predictive Modeling & EDA Studio</title>
     <!-- Google Fonts: Outfit -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -55,9 +55,11 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 2.5rem;
+            margin-bottom: 2rem;
             border-bottom: 1px solid var(--card-border);
             padding-bottom: 1.5rem;
+            flex-wrap: wrap;
+            gap: 1.5rem;
         }
 
         .logo-area h1 {
@@ -73,6 +75,39 @@
             color: var(--text-muted);
             font-size: 0.95rem;
             margin-top: 0.25rem;
+        }
+
+        /* Studio Navigation Tabs */
+        .studio-nav {
+            display: flex;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--card-border);
+            padding: 0.35rem;
+            border-radius: 0.75rem;
+            gap: 0.25rem;
+        }
+
+        .nav-tab {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            padding: 0.6rem 1.25rem;
+            font-family: inherit;
+            font-weight: 600;
+            font-size: 0.95rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .nav-tab:hover {
+            color: var(--text-main);
+        }
+
+        .nav-tab.active {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: #fff;
+            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.25);
         }
 
         .status-badge {
@@ -111,7 +146,17 @@
             }
         }
 
-        /* Grid Layout */
+        /* Studios Displays */
+        .studio-content {
+            display: none;
+            animation: fadeIn 0.4s ease forwards;
+        }
+
+        .studio-content.active {
+            display: block;
+        }
+
+        /* Grid Layouts */
         .dashboard-grid {
             display: grid;
             grid-template-columns: 1.1fr 1.4fr;
@@ -237,6 +282,10 @@
             gap: 0.5rem;
         }
 
+        .form-group.full-width {
+            grid-column: span 2;
+        }
+
         .form-group label {
             font-size: 0.85rem;
             font-weight: 500;
@@ -281,10 +330,6 @@
         .btn-predict:hover {
             transform: translateY(-2px);
             box-shadow: 0 6px 20px rgba(139, 92, 246, 0.5);
-        }
-
-        .btn-predict:active {
-            transform: translateY(0);
         }
 
         /* Result Panel */
@@ -388,6 +433,7 @@
             border-bottom: 1px solid var(--card-border);
             padding-bottom: 0.75rem;
             margin-bottom: 1.5rem;
+            flex-wrap: wrap;
         }
 
         .tab-btn {
@@ -422,13 +468,14 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            min-height: 380px;
+            min-height: 420px;
             overflow: hidden;
+            padding: 0.5rem;
         }
 
         .plot-img {
             max-width: 100%;
-            max-height: 380px;
+            max-height: 400px;
             border-radius: 0.5rem;
             display: none;
             animation: fadeIn 0.5s ease forwards;
@@ -544,6 +591,102 @@
             color: var(--text-muted);
             text-transform: uppercase;
         }
+
+        /* ==============================
+           EDA STUDIO STYLING
+           ============================== */
+        .eda-summary-row {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        @media (max-width: 768px) {
+            .eda-summary-row {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        .eda-stat-card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 1rem;
+            padding: 1.25rem;
+            text-align: center;
+            backdrop-filter: blur(12px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .eda-stat-card h3 {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 0.5rem;
+        }
+
+        .eda-stat-card p {
+            font-size: 1.8rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #fff, var(--text-muted));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .eda-stat-card.highlight p {
+            background: linear-gradient(135deg, #60a5fa, #a78bfa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* Correlation Bar List */
+        .factor-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1.1rem;
+        }
+
+        .factor-item {
+            display: flex;
+            flex-direction: column;
+            gap: 0.4rem;
+        }
+
+        .factor-header {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .factor-bar-bg {
+            background: rgba(255, 255, 255, 0.05);
+            height: 8px;
+            border-radius: 4px;
+            overflow: hidden;
+            width: 100%;
+        }
+
+        .factor-bar-fill {
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            height: 100%;
+            border-radius: 4px;
+            transition: width 1s ease-out;
+        }
+
+        .eda-grid {
+            display: grid;
+            grid-template-columns: 1.2fr 1.3fr;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        @media (max-width: 1024px) {
+            .eda-grid {
+                grid-template-columns: 1fr;
+            }
+        }
     </style>
 </head>
 <body>
@@ -552,132 +695,233 @@
     <!-- Header -->
     <header>
         <div class="logo-area">
-            <h1>Predictive Modeling & ML Studio</h1>
-            <p>Loan Approval Classification & Model Performance Evaluation</p>
+            <h1>Predictive Modeling & EDA Studio</h1>
+            <p>Loan Approvals Analytics & Classification Pipeline</p>
         </div>
+        
+        <!-- Tab navigation -->
+        <div class="studio-nav">
+            <button class="nav-tab active" id="tab-ml" onclick="switchStudio('ml')">Predictive Model Studio</button>
+            <button class="nav-tab" id="tab-eda" onclick="switchStudio('eda')">Exploratory Data Analysis (EDA)</button>
+        </div>
+
         <div class="status-badge">
             <span class="status-pulse"></span>
             <span>Localhost Active: Port 5000</span>
         </div>
     </header>
 
-    <!-- Main Grid -->
-    <div class="dashboard-grid">
-        
-        <!-- Left Side: Models and Form -->
-        <div style="display: flex; flex-direction: column; gap: 2rem;">
+    <!-- ==============================
+         1. ML STUDIO CONTENT
+         ============================== -->
+    <div id="ml-studio" class="studio-content active">
+        <!-- Main Grid -->
+        <div class="dashboard-grid">
             
-            <!-- Best Model & Overview Card -->
-            <div class="card">
-                <div class="card-title">
-                    <span>Model Performance</span>
-                </div>
+            <!-- Left Side: Models and Form -->
+            <div style="display: flex; flex-direction: column; gap: 2rem;">
                 
-                <div class="best-model-banner">
-                    <div class="best-model-info">
-                        <h4>Best Performing Model</h4>
-                        <p id="best-model-name">Loading...</p>
+                <!-- Best Model & Overview Card -->
+                <div class="card">
+                    <div class="card-title">
+                        <span>Model Performance</span>
                     </div>
-                    <span class="best-model-badge">Active</span>
+                    
+                    <div class="best-model-banner">
+                        <div class="best-model-info">
+                            <h4>Best Performing Model</h4>
+                            <p id="best-model-name">Loading...</p>
+                        </div>
+                        <span class="best-model-badge">Active</span>
+                    </div>
+
+                    <div class="model-list" id="model-list">
+                        <!-- Dynamic model items loaded here -->
+                    </div>
+
+                    <!-- Classification Report Stats for selected model -->
+                    <div class="reports-container">
+                        <h4 style="font-size: 0.9rem; color: var(--text-muted); font-weight: 600;">Model Metrics Summary</h4>
+                        <div class="report-grid">
+                            <div class="report-stat-card">
+                                <div class="report-stat-val" id="stat-precision">-</div>
+                                <div class="report-stat-label">Precision</div>
+                            </div>
+                            <div class="report-stat-card">
+                                <div class="report-stat-val" id="stat-recall">-</div>
+                                <div class="report-stat-label">Recall</div>
+                            </div>
+                            <div class="report-stat-card">
+                                <div class="report-stat-val" id="stat-f1">-</div>
+                                <div class="report-stat-label">F1-Score</div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
-                <div class="model-list" id="model-list">
-                    <!-- Dynamic model items loaded here -->
-                </div>
+                <!-- Loan Prediction Form -->
+                <div class="card">
+                    <div class="card-title">
+                        <span>Real-time Prediction</span>
+                    </div>
+                    
+                    <form id="prediction-form" onsubmit="handlePredict(event)">
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="age">Age (Years)</label>
+                                <input type="number" id="age" value="32" required min="18" max="100">
+                            </div>
+                            <div class="form-group">
+                                <label for="income">Annual Income ($)</label>
+                                <input type="number" id="income" value="55000" required min="5000">
+                            </div>
+                            <div class="form-group">
+                                <label for="credit_score">Credit Score</label>
+                                <input type="number" id="credit_score" value="710" required min="300" max="850">
+                            </div>
+                            <div class="form-group">
+                                <label for="dti">Debt-to-Income (DTI)</label>
+                                <input type="number" id="dti" value="0.32" step="0.01" required min="0.0" max="1.0">
+                            </div>
+                            <div class="form-group full-width">
+                                <label for="loan_amount">Loan Amount Requested ($)</label>
+                                <input type="number" id="loan_amount" value="12000" required min="500">
+                            </div>
+                        </div>
+                        <button type="submit" class="btn-predict" id="predict-btn">
+                            <span>Analyze Application</span>
+                        </button>
+                    </form>
 
-                <!-- Classification Report Stats for selected model -->
-                <div class="reports-container">
-                    <h4 style="font-size: 0.9rem; color: var(--text-muted); font-weight: 600;">Model Metrics Summary</h4>
-                    <div class="report-grid">
-                        <div class="report-stat-card">
-                            <div class="report-stat-val" id="stat-precision">-</div>
-                            <div class="report-stat-label">Precision</div>
+                    <!-- Prediction Result Box -->
+                    <div class="result-container" id="result-box">
+                        <div class="result-info">
+                            <h5 id="result-model-badge">Best Model Output</h5>
+                            <p id="result-text">Approved</p>
                         </div>
-                        <div class="report-stat-card">
-                            <div class="report-stat-val" id="stat-recall">-</div>
-                            <div class="report-stat-label">Recall</div>
-                        </div>
-                        <div class="report-stat-card">
-                            <div class="report-stat-val" id="stat-f1">-</div>
-                            <div class="report-stat-label">F1-Score</div>
+                        <div class="progress-circle">
+                            <svg>
+                                <circle class="progress-bg" cx="35" cy="35" r="32"></circle>
+                                <circle class="progress-bar" id="progress-bar-circle" cx="35" cy="35" r="32"></circle>
+                            </svg>
+                            <div class="progress-text" id="progress-percentage">-%</div>
                         </div>
                     </div>
                 </div>
+
             </div>
 
-            <!-- Loan Prediction Form -->
-            <div class="card">
+            <!-- Right Side: Plots Viewer -->
+            <div class="card" style="display: flex; flex-direction: column;">
                 <div class="card-title">
-                    <span>Real-time Prediction</span>
+                    <span>Visual Evaluation Reports</span>
                 </div>
                 
-                <form id="prediction-form" onsubmit="handlePredict(event)">
-                    <div class="form-grid">
-                        <div class="form-group">
-                            <label for="age">Age (Years)</label>
-                            <input type="number" id="age" value="32" required min="18" max="100">
-                        </div>
-                        <div class="form-group">
-                            <label for="income">Annual Income ($)</label>
-                            <input type="number" id="income" value="55000" required min="5000">
-                        </div>
-                        <div class="form-group">
-                            <label for="credit_score">Credit Score</label>
-                            <input type="number" id="credit_score" value="710" required min="300" max="850">
-                        </div>
-                        <div class="form-group">
-                            <label for="loan_amount">Loan Amount Requested ($)</label>
-                            <input type="number" id="loan_amount" value="12000" required min="500">
-                        </div>
-                    </div>
-                    <button type="submit" class="btn-predict" id="predict-btn">
-                        <span>Analyze Application</span>
-                    </button>
-                </form>
+                <div class="plot-tabs">
+                    <button class="tab-btn active" id="btn-plot-cm" onclick="switchPlot('confusion_matrix', this)">Confusion Matrix</button>
+                    <button class="tab-btn" id="btn-plot-roc" onclick="switchPlot('roc_curve', this)">ROC Curve</button>
+                    <button class="tab-btn" id="btn-plot-comp" onclick="switchPlot('accuracy_comparison', this)">Model Accuracies</button>
+                </div>
 
-                <!-- Prediction Result Box -->
-                <div class="result-container" id="result-box">
-                    <div class="result-info">
-                        <h5 id="result-model-badge">Best Model Output</h5>
-                        <p id="result-text">Approved</p>
-                    </div>
-                    <!-- Circular approval percentage indicator -->
-                    <div class="progress-circle">
-                        <svg>
-                            <circle class="progress-bg" cx="35" cy="35" r="32"></circle>
-                            <circle class="progress-bar" id="progress-bar-circle" cx="35" cy="35" r="32"></circle>
-                        </svg>
-                        <div class="progress-text" id="progress-percentage">-%</div>
-                    </div>
+                <div class="plot-display-area">
+                    <div class="spinner" id="ml-plot-spinner"></div>
+                    <img id="ml-plot-img" class="plot-img" alt="Evaluation Plot">
                 </div>
             </div>
 
         </div>
-
-        <!-- Right Side: Plots Viewer -->
-        <div class="card" style="display: flex; flex-direction: column;">
-            <div class="card-title">
-                <span>Visual Analysis Reports</span>
-            </div>
-            
-            <div class="plot-tabs">
-                <button class="tab-btn active" onclick="switchPlot('confusion_matrix', this)">Confusion Matrix</button>
-                <button class="tab-btn" onclick="switchPlot('roc_curve', this)">ROC Curve</button>
-                <button class="tab-btn" onclick="switchPlot('accuracy_comparison', this)">Model Accuracies</button>
-            </div>
-
-            <div class="plot-display-area" id="plot-area">
-                <div class="spinner" id="plot-spinner"></div>
-                <img id="plot-img" class="plot-img" alt="Evaluation Plot">
-            </div>
-        </div>
-
     </div>
 
-    <!-- Bottom: Dataset Table -->
+
+    <!-- ==============================
+         2. EDA STUDIO CONTENT
+         ============================== -->
+    <div id="eda-studio" class="studio-content">
+        <!-- Summary metrics cards row -->
+        <div class="eda-summary-row">
+            <div class="eda-stat-card">
+                <h3>Total Records</h3>
+                <p id="eda-total-records">200</p>
+            </div>
+            <div class="eda-stat-card highlight">
+                <h3>Approval Rate</h3>
+                <p id="eda-approval-rate">-%</p>
+            </div>
+            <div class="eda-stat-card">
+                <h3>Approved Loans</h3>
+                <p id="eda-total-approved">-</p>
+            </div>
+            <div class="eda-stat-card">
+                <h3>Rejected Loans</h3>
+                <p id="eda-total-rejected">-</p>
+            </div>
+        </div>
+
+        <div class="eda-grid">
+            <!-- Left Panel: Summary Statistics & Core Factors -->
+            <div style="display: flex; flex-direction: column; gap: 2rem;">
+                
+                <!-- Descriptive Stats table -->
+                <div class="card">
+                    <div class="card-title">
+                        <span>Descriptive Statistics</span>
+                    </div>
+                    <div class="table-responsive" style="max-height: 450px;">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Variable</th>
+                                    <th>Mean</th>
+                                    <th>Std Dev</th>
+                                    <th>Min</th>
+                                    <th>Max</th>
+                                </tr>
+                            </thead>
+                            <tbody id="eda-stats-tbody">
+                                <!-- Loaded dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Correlation Strengths -->
+                <div class="card">
+                    <div class="card-title">
+                        <span>Key Influencing Factors (Correlation with Approval)</span>
+                    </div>
+                    <div class="factor-list" id="eda-factors-list">
+                        <!-- Loaded dynamically -->
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Right Panel: EDA Visualization tabs -->
+            <div class="card" style="display: flex; flex-direction: column;">
+                <div class="card-title">
+                    <span>Data Patterns & Visualizations</span>
+                </div>
+                
+                <div class="plot-tabs">
+                    <button class="tab-btn active" id="btn-eda-corr" onclick="switchEdaPlot('correlation_heatmap', this)">Correlation Heatmap</button>
+                    <button class="tab-btn" id="btn-eda-dist" onclick="switchEdaPlot('credit_distribution', this)">Credit Distribution</button>
+                    <button class="tab-btn" id="btn-eda-scatter" onclick="switchEdaPlot('income_vs_credit', this)">Income vs Credit</button>
+                    <button class="tab-btn" id="btn-eda-box" onclick="switchEdaPlot('dti_boxplot', this)">DTI Boxplot</button>
+                </div>
+
+                <div class="plot-display-area">
+                    <div class="spinner" id="eda-plot-spinner"></div>
+                    <img id="eda-plot-img" class="plot-img" alt="EDA Plot">
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Bottom: Dataset Explorer (Applies to both) -->
     <div class="card table-card">
         <div class="card-title">
-            <span>Training Dataset Inspect</span>
+            <span>Dataset Browser (200 records sample)</span>
         </div>
         <div class="table-responsive">
             <table>
@@ -687,6 +931,7 @@
                         <th>Age</th>
                         <th>Annual Income ($)</th>
                         <th>Credit Score</th>
+                        <th>Debt-to-Income (DTI)</th>
                         <th>Loan Amount ($)</th>
                         <th>Status</th>
                     </tr>
@@ -700,12 +945,36 @@
 </div>
 
 <script>
-    // Global state
+    // Global State
     let metricsData = null;
-    let plotsData = null;
+    let mlPlots = null;
+    let edaSummary = null;
+    let edaPlots = null;
     let activeModel = null;
 
-    // Fetch initial metrics, models and table data
+    // Switch between Model Studio and EDA Studio
+    function switchStudio(studio) {
+        document.querySelectorAll('.nav-tab').forEach(btn => btn.classList.remove('active'));
+        document.querySelectorAll('.studio-content').forEach(box => box.classList.remove('active'));
+
+        if (studio === 'ml') {
+            document.getElementById('tab-ml').classList.add('active');
+            document.getElementById('ml-studio').classList.add('active');
+        } else {
+            document.getElementById('tab-eda').classList.add('active');
+            document.getElementById('eda-studio').classList.add('active');
+            // Lazy load EDA data
+            if (!edaSummary) {
+                loadEdaData();
+            }
+        }
+    }
+
+    // ==============================
+    // ML STUDIO CONTROLLERS
+    // ==============================
+    
+    // Fetch metrics, model results and initial dataset table
     async function loadMetrics() {
         try {
             const res = await fetch('/api/metrics');
@@ -733,13 +1002,14 @@
                 listContainer.appendChild(element);
             });
 
-            // Set initially active model stats
+            // Set metrics
             renderModelReport(activeModel);
 
             // Render Table Rows
             const tbody = document.getElementById('dataset-body');
             tbody.innerHTML = '';
-            data.dataset.forEach((row, i) => {
+            // Display first 20 records for convenience
+            data.dataset.slice(0, 25).forEach((row, i) => {
                 const statusBadge = row.Approved === 1 
                     ? '<span class="badge badge-success">Approved</span>' 
                     : '<span class="badge badge-danger">Rejected</span>';
@@ -750,6 +1020,7 @@
                     <td>${row.Age}</td>
                     <td>$${row.Income.toLocaleString()}</td>
                     <td>${row.CreditScore}</td>
+                    <td>${(row.DebtToIncome * 100).toFixed(1)}%</td>
                     <td>$${row.LoanAmount.toLocaleString()}</td>
                     <td>${statusBadge}</td>
                 `;
@@ -761,7 +1032,6 @@
         }
     }
 
-    // Select/Change active model in overview list
     function selectModel(name, element) {
         document.querySelectorAll('.model-item').forEach(el => el.classList.remove('active'));
         element.classList.add('active');
@@ -769,12 +1039,9 @@
         renderModelReport(name);
     }
 
-    // Show model metrics
     function renderModelReport(modelName) {
         if (!metricsData) return;
         const report = metricsData.classification_reports[modelName];
-        
-        // Use average metrics (macro avg or weighted avg)
         const metrics = report['macro avg'];
         
         document.getElementById('stat-precision').innerText = (metrics.precision * 100).toFixed(0) + '%';
@@ -782,38 +1049,34 @@
         document.getElementById('stat-f1').innerText = (metrics['f1-score'] * 100).toFixed(0) + '%';
     }
 
-    // Fetch and load evaluation plots (confusion matrix, ROC, comparisons)
-    async function loadPlots() {
-        const spinner = document.getElementById('plot-spinner');
-        const img = document.getElementById('plot-img');
+    // Load ML Evaluation plots
+    async function loadMlPlots() {
+        const spinner = document.getElementById('ml-plot-spinner');
+        const img = document.getElementById('ml-plot-img');
         
         spinner.style.display = 'block';
         img.style.display = 'none';
 
         try {
             const res = await fetch('/api/plots');
-            const data = await res.json();
-            plotsData = data;
-            
-            // Render first plot (Confusion Matrix)
-            switchPlot('confusion_matrix', document.querySelector('.tab-btn.active'));
+            mlPlots = await res.json();
+            switchPlot('confusion_matrix', document.getElementById('btn-plot-cm'));
         } catch (e) {
-            console.error('Error loading plots:', e);
+            console.error('Error loading ML plots:', e);
         }
     }
 
-    // Switch between plots
     function switchPlot(plotKey, buttonElement) {
-        if (!plotsData) return;
+        if (!mlPlots) return;
         
-        document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+        document.querySelectorAll('#ml-studio .tab-btn').forEach(btn => btn.classList.remove('active'));
         buttonElement.classList.add('active');
         
-        const img = document.getElementById('plot-img');
-        const spinner = document.getElementById('plot-spinner');
+        const img = document.getElementById('ml-plot-img');
+        const spinner = document.getElementById('ml-plot-spinner');
         
         spinner.style.display = 'none';
-        img.src = plotsData[plotKey];
+        img.src = mlPlots[plotKey];
         img.style.display = 'block';
     }
 
@@ -832,6 +1095,7 @@
             age: parseFloat(document.getElementById('age').value),
             income: parseFloat(document.getElementById('income').value),
             credit_score: parseFloat(document.getElementById('credit_score').value),
+            dti: parseFloat(document.getElementById('dti').value),
             loan_amount: parseFloat(document.getElementById('loan_amount').value)
         };
 
@@ -847,21 +1111,18 @@
             predictBtn.innerText = prevText;
             
             if (data.status === 'success') {
-                // Show result box
-                resultBox.className = 'result-container'; // clear classes
+                resultBox.className = 'result-container';
                 resultBox.classList.add(data.approved ? 'approved' : 'rejected');
                 
                 document.getElementById('result-model-badge').innerText = `Prediction: ${data.best_model_used}`;
                 document.getElementById('result-text').innerText = data.prediction;
                 
-                // Show progress circle (Probability)
                 const percentage = data.probability !== null 
                     ? Math.round(data.probability * 100) 
                     : (data.approved ? 100 : 0);
                 
                 document.getElementById('progress-percentage').innerText = percentage + '%';
                 
-                // Set svg circular stroke offset: r=32 -> circumference=2*pi*32 ~= 201
                 const circle = document.getElementById('progress-bar-circle');
                 const circumference = 201;
                 const offset = circumference - (percentage / 100) * circumference;
@@ -875,14 +1136,113 @@
             predictBtn.disabled = false;
             predictBtn.innerText = prevText;
             console.error('Error running prediction:', e);
-            alert('Server error occurred during prediction.');
         }
     }
 
-    // Initialize Page
+    // ==============================
+    // EDA STUDIO CONTROLLERS
+    // ==============================
+    
+    // Fetch and display EDA stats and summaries
+    async function loadEdaData() {
+        try {
+            const resSummary = await fetch('/api/eda/summary');
+            const dataSummary = await resSummary.json();
+            edaSummary = dataSummary;
+
+            // Render stats counts cards
+            document.getElementById('eda-total-records').innerText = dataSummary.counts.total_records;
+            document.getElementById('eda-approval-rate').innerText = dataSummary.counts.approval_rate + '%';
+            document.getElementById('eda-total-approved').innerText = dataSummary.counts.approved;
+            document.getElementById('eda-total-rejected').innerText = dataSummary.counts.rejected;
+
+            // Render Descriptive Statistics Table
+            const statsBody = document.getElementById('eda-stats-tbody');
+            statsBody.innerHTML = '';
+            
+            Object.keys(dataSummary.summary_statistics).forEach(key => {
+                const item = dataSummary.summary_statistics[key];
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td style="font-weight: 600; color: #93c5fd">${key}</td>
+                    <td>${item.mean.toFixed(2)}</td>
+                    <td>${item.std.toFixed(2)}</td>
+                    <td>${item.min.toFixed(1)}</td>
+                    <td>${item.max.toFixed(1)}</td>
+                `;
+                statsBody.appendChild(tr);
+            });
+
+            // Render Key Influencing Factors list (Correlation Bar)
+            const factorsList = document.getElementById('eda-factors-list');
+            factorsList.innerHTML = '';
+            dataSummary.influencing_factors.forEach(factor => {
+                // correlation percentage width
+                const corrPct = Math.min(Math.abs(factor.correlation) * 100, 100).toFixed(0);
+                const isPositive = factor.correlation >= 0;
+                const badgeClass = isPositive ? 'badge-success' : 'badge-danger';
+                
+                const element = document.createElement('div');
+                element.className = 'factor-item';
+                element.innerHTML = `
+                    <div class="factor-header">
+                        <span>${factor.feature}</span>
+                        <span class="badge ${badgeClass}">${isPositive ? '+' : ''}${factor.correlation.toFixed(3)} r</span>
+                    </div>
+                    <div class="factor-bar-bg">
+                        <div class="factor-bar-fill" style="width: 0%; background: ${isPositive ? 'var(--success)' : 'var(--danger)'}"></div>
+                    </div>
+                `;
+                factorsList.appendChild(element);
+                
+                // Animate bar loading
+                setTimeout(() => {
+                    element.querySelector('.factor-bar-fill').style.width = corrPct + '%';
+                }, 150);
+            });
+
+            // Fetch EDA visual plots
+            loadEdaPlots();
+
+        } catch (e) {
+            console.error('Error fetching EDA data:', e);
+        }
+    }
+
+    async function loadEdaPlots() {
+        const spinner = document.getElementById('eda-plot-spinner');
+        const img = document.getElementById('eda-plot-img');
+        
+        spinner.style.display = 'block';
+        img.style.display = 'none';
+
+        try {
+            const res = await fetch('/api/eda/plots');
+            edaPlots = await res.json();
+            switchEdaPlot('correlation_heatmap', document.getElementById('btn-eda-corr'));
+        } catch (e) {
+            console.error('Error loading EDA plots:', e);
+        }
+    }
+
+    function switchEdaPlot(plotKey, buttonElement) {
+        if (!edaPlots) return;
+        
+        document.querySelectorAll('#eda-studio .tab-btn').forEach(btn => btn.classList.remove('active'));
+        buttonElement.classList.add('active');
+        
+        const img = document.getElementById('eda-plot-img');
+        const spinner = document.getElementById('eda-plot-spinner');
+        
+        spinner.style.display = 'none';
+        img.src = edaPlots[plotKey];
+        img.style.display = 'block';
+    }
+
+    // Initialize Web Studio Page
     window.addEventListener('DOMContentLoaded', () => {
         loadMetrics();
-        loadPlots();
+        loadMlPlots();
     });
 </script>
 
